@@ -127,6 +127,9 @@ missing
 test_libpluto
 
 # Later added for the forked copy
+build/
+installation/
+
 polylib/compile
 polylib/config.guess
 polylib/config.sub
