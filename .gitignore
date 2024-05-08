@@ -125,3 +125,12 @@ libtool
 getversion.sh
 missing
 test_libpluto
+
+# Later added for the forked copy
+polylib/compile
+polylib/config.guess
+polylib/config.sub
+polylib/depcomp
+polylib/install-sh
+polylib/ltmain.sh
+polylib/missing

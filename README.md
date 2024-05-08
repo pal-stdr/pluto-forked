@@ -1,5 +1,8 @@
 # Pluto
 
+## For the Pluto forked copy instructions, Please check the [SETUP-PLUTO.md](doc/helper-docs/SETUP-PLUTO.md) doc.
+
+
 ## OVERVIEW
 
 Please see http://pluto-compiler.sourceforge.net.
