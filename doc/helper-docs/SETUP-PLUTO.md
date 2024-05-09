@@ -19,7 +19,7 @@ Pluto and libpluto are available under the MIT LICENSE. Please see the file [`LI
 
 - In order to use the development version from Pluto's git repository, automatic build system tools, including `autoconf`, `automake`, and `libtool` are needed.
 
-- LLVM/Clang 14.x (14.x recommended, 11.x, 12.x tested to work as well), along with its development/header files, is needed for the pet submodule. For this forked copy, `LLVM/Clang 16.0.6` is also tested successfully.
+- LLVM/Clang 14.x (14.x recommended, 11.x, 12.x tested to work as well), along with its development/header files, is needed for the pet submodule. **For this forked copy, `Clang 16.0.6` & `Clang 15.0.0` is also tested successfully.**
 
 ### Installing Dev dependencies
 
@@ -122,12 +122,26 @@ export LLVM_CONFIG="$LLVM_INSTALLATION_ROOT/bin/llvm-config"
 export LLVM_AND_CLANG_BIN_PATH="$LLVM_INSTALLATION_ROOT/bin"
 export LLVM_AND_CLANG_LIB_PATH="$LLVM_INSTALLATION_ROOT/lib"
 export LLVM_AND_CLANG_INCLUDE_PATH="$LLVM_INSTALLATION_ROOT/include"
-export LD_LIBRARY_PATH=$LLVM_AND_CLANG_LIB_PATH${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=$LLVM_AND_CLANG_LIB_PATH${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 export PATH=$LLVM_AND_CLANG_BIN_PATH${PATH:+:${PATH}}
 ```
 
-- **If you already have another `Clang` configured in your `~/.bashrc` or `~/.profile`**
-Check the build shell script for pluto.
+- **If you want to use other `Clang` (e.g. `llvm 15.0.0`) for pluto, even you already have another `Clang` (e.g. `llvm 16.0.6`) configured in your `~/.bashrc` or `~/.profile`**
+Assume you have already `llvm 16.0.6` build & configured in `~/.profile`. Now you want use another `llvm` version (e.g. `llvm 15.0.0` setup in ) for `pet` in pluto.
+Then push the following snippet in your `~/.profile`. If you donot do this, when you run `./installation/bin/polycc input_code.c`, you will get error like `/path/build/tool/pluto: error while loading shared libraries: libclang-cpp.so.15git: cannot open shared object file: No such file or directory`
+
+```sh
+# Already defined config for llvm 16.0.6
+export LLVM_FOLDER_NAME="llvm-16-src-build"
+#.....
+#....
+
+# ADD THE FOLLOWINGs for llvm 15.0.0
+LLVM_FOR_PET_INSTALLATION_ROOT=/abs/path/to/your/llvm-15-src-build/installation
+LLVM_FOR_PET_LIB_PATH=$LLVM_FOR_PET_INSTALLATION_ROOT/lib
+export LD_LIBRARY_PATH=$LLVM_FOR_PET_LIB_PATH${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+```
+
 
 
 ## Installing Pluto
@@ -196,12 +210,9 @@ WANT_TO_BUILD_ONLY=$([ $WANT_TO_CONFIGURE_AND_BUILD -eq 0 ] && echo 1 || echo 0)
 # "LLVM_FOR_PET_INSTALLATION_ROOT" set this to LLVM 16 build or installation path
 LLVM_FOR_PET_INSTALLATION_ROOT=/path/to/your/llvm-16-src-build/installation
 
-# If you already have another Clang version in your machine, you need to keep active this part.
-# Or even if you don't want to change your ~/.bashrc or ~/.profile for "Clang" build setup, you can keep them activated too. Or comment it out.
+# If you already have another Clang version in your machine, and you are using another "clang" version, you need to keep this part.
 LLVM_FOR_PET_LIB_PATH=$LLVM_FOR_PET_INSTALLATION_ROOT/lib
-LLVM_FOR_PET_BIN_PATH=$LLVM_FOR_PET_INSTALLATION_ROOT/bin
 export LD_LIBRARY_PATH=$LLVM_FOR_PET_LIB_PATH${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-export PATH=$LLVM_FOR_PET_BIN_PATH${PATH:+:${PATH}}
 
 
 
@@ -306,3 +317,103 @@ fi
 
 # make install
 ```
+
+
+## How to use `Pluto`
+
+Though the `--prefix=` is set to `pluto/installation`, so the bins can be found in `./installation/bin/` dir
+
+### Using `pluto` bin (`in`)
+
+- Usage format `installation/bin/pluto <input.c> [options] -o <output.c>`. Example `./installation/bin/pluto test/matmul.c -o test/transformed_matmul.c`
+
+
+### Using generated `polycc` script bin (`installation/bin/polycc`)
+
+- Usage format `installation/bin/polycc <input.c> [options] -o <output.c>`. Example `./installation/bin/polycc test/matmul.c -o test/transformed_matmul.c`
+
+- Remember `polycc` is shell script which act as a wrapper around `pluto`. It handles the optimization flags/options for this pluto release.
+
+- Actually this `polycc` points to `build/tool/pluto`. **So if you want to use `polycc`, you cannot delete the `build/` dir**. Neither you will get error like `/pluto/build/tool/pluto: No such file or directory`. See the following snippet collected from inside of the `polycc`
+
+```sh
+pluto=/path/to/pluto/build/tool/pluto
+inscop=/path/to/pluto-test-v2/build/../inscop
+
+# check for command-line options
+for arg in $*; do
+    if [ $arg == "--parallel" ]; then
+        PARALLEL=1
+    elif [ $arg == "--parallelize" ]; then
+        PARALLEL=1
+    elif [ $arg == "--unroll" ]; then
+        UNROLL=1
+    elif [ $arg == "--debug" ]; then
+        DEBUG=1
+    elif [ $arg == "--moredebug" ]; then
+        DEBUG=1
+    elif [ $arg == "-i" ]; then
+        INDENT=1
+    elif [ $arg == "--indent" ]; then
+        INDENT=1
+    elif [ $arg == "--silent" ]; then
+        SILENT=1
+    fi
+done
+
+```
+
+### Some of the `flags` for `pluto`
+
+- Default for this `0.12.0-2-g001cb37` version (for details check [ChangeLog](ChangeLog))
+
+```sh
+- Introduced loop unroll and jam support using ClooG AST and enable it by
+  default.
+- Improvements to intra-tile optimization heuristics.
+- Support for the LP based decoupled framework, Pluto-lp-dfp, included;
+  requires Pluto to be configured with GLPK or Gurobi.
+- Two more fusion models, namely, typed and hybrid fusion incorporated. These
+  models use the decoupled framework work.
+- libpluto interface updated.
+- --tile and --parallel enabled by default
+- Diamond tiling enabled by default
+- Auto-indentifucation of time-iterated stencils with concurrent start.
+- Code modernized for compilation with C++ compilers; language changed to C99
+  and C++11 for all future development
+- src/ split into lib/ and tool/ to separate out libpluto and the pluto tool.
+```
+
+- Available `Optimization` flags
+
+```sh
+
+Optimizations          Options related to optimization
+       --tile                    Tile for locality [disabled by default]
+       --[no]intratileopt        Optimize intra-tile execution order for locality [enabled by default]
+       --second-level-tile       Tile a second time (typically for L2 cache) [disabled by default] 
+       --determine-tile-size    Choose tile sizes using a tile size selection model
+       --cache-size=<value>    Cache size per core in bytes for first level of tiling. Default 1MB (L2 cache size))
+       --data-element-size=<value>  Size of each data element in bytes. Default sizeof(double)
+       --parallel                Automatically parallelize (generate OpenMP pragmas) [disabled by default]
+    or --parallelize
+       --[no]diamond-tile        Performs diamond tiling (enabled by default)
+       --full-diamond-tile       Enables full-dimensional concurrent start
+       --per-cc-obj              Enables separate dependence distance upper bounds for dependences from different connected components
+       --[no]prevector           Mark loops for (icc/gcc) vectorization (enabled by default)
+       --multipar                Extract all degrees of parallelism [disabled by default];
+                                    by default one degree is extracted within any schedule sub-tree (if it exists)
+       --innerpar                Choose pure inner parallelism over pipelined/wavefront parallelism [disabled by default]
+
+   Fusion                Options to control fusion heuristic
+       --nofuse                  Do not fuse across SCCs of data dependence graph
+       --maxfuse                 Maximal fusion
+       --smartfuse [default]     Heuristic (in between nofuse and maxfuse)
+       --typedfuse               Typed fusion. Fuses SCCs only when there is no loss of parallelism [uses dfp framework and requires glpk or gurobi for solving LPs]
+       --hybridfuse              Typed fusion at outer levels and max fuse at inner level [uses dfp framework and requires glpk or gurobi for solving LPs]
+       --delayedcut              Delays the cut between SCCs of different dimensionalities in dfp approach [uses glpk or gurobi for solving LPs]
+```
+
+
+
+

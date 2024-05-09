@@ -16,12 +16,9 @@ WANT_TO_BUILD_ONLY=$([ $WANT_TO_CONFIGURE_AND_BUILD -eq 0 ] && echo 1 || echo 0)
 # "LLVM_FOR_PET_INSTALLATION_ROOT" set this to LLVM 16 build or installation path
 LLVM_FOR_PET_INSTALLATION_ROOT=/path/to/your/llvm-16-src-build/installation
 
-# If you already have another Clang version in your machine, you need to keep active this part.
-# Or even if you don't want to change your ~/.bashrc or ~/.profile for "Clang" build setup, you can keep them activated too. Or comment it out.
+# If you already have another Clang version in your machine, and you are using another "clang" version, you need to keep this part.
 LLVM_FOR_PET_LIB_PATH=$LLVM_FOR_PET_INSTALLATION_ROOT/lib
-LLVM_FOR_PET_BIN_PATH=$LLVM_FOR_PET_INSTALLATION_ROOT/bin
 export LD_LIBRARY_PATH=$LLVM_FOR_PET_LIB_PATH${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-export PATH=$LLVM_FOR_PET_BIN_PATH${PATH:+:${PATH}}
 
 
 
