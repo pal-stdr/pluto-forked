@@ -43,7 +43,7 @@ pluto_CXXFLAGS = $(OPT_FLAGS) $(DEBUG_FLAGS) \
    -I$(top_srcdir)/candl/include \
    -I../polylib/include \
    -I$(top_srcdir)/polylib/include \
-   -I$(top_srcdir)/lib
+   -I$(top_srcdir)/lib \
    -I$(top_srcdir)/  # For cJSON
 
 # To avoid same name object from being created with libtool and without it.
