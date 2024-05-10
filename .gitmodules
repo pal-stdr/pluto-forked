@@ -22,3 +22,7 @@
 [submodule "pet"]
 	path = pet
 	url = https://github.com/bondhugula/pet-for-pluto.git
+[submodule "cJSON"]
+	path = cJSON
+	url = https://github.com/pal-stdr/cJSON-forked.git
+	branch = v1.7.17-for-pluto
