@@ -16,7 +16,7 @@ ISL_INCLUDE += -I$(top_srcdir)/isl/include -I$(top_builddir)/isl/include
 ISL_LIBADD += $(top_builddir)/isl/libisl.la
 endif
 
-SUBDIRS = piplib $(MAY_ISL) lib polylib openscop cloog-isl clan candl pet tool
+SUBDIRS = piplib $(MAY_ISL) lib polylib openscop cloog-isl clan candl pet cJSON tool
 
 ACLOCAL_AMFLAGS = -I m4
 

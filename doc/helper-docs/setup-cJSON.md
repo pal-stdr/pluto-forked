@@ -73,7 +73,7 @@ cd ..
 ## 4. Add following in `configure.ac` after `cloog-isl` setup (typically after `line 356`)
 
 ```sh
-# Custom command to build the cJSON library - PALLAB
+dnl Custom command to build the cJSON library - PALLAB
 dnl Configuring cJSON
 echo ""
 echo "=========================="

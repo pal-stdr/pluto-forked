@@ -44,6 +44,7 @@ pluto_CXXFLAGS = $(OPT_FLAGS) $(DEBUG_FLAGS) \
    -I../polylib/include \
    -I$(top_srcdir)/polylib/include \
    -I$(top_srcdir)/lib
+   -I$(top_srcdir)/  # For cJSON
 
 # To avoid same name object from being created with libtool and without it.
 pluto_CFLAGS = $(AM_CFLAGS) $(pluto_CXXFLAGS)
@@ -60,4 +61,5 @@ pluto_LDADD =  \
    $(ISL_LIBADD) \
    ../piplib/libpiplib_dp.la \
    ../pet/libpet.la \
+   ../cJSON/libcJSON.la \
    -lm

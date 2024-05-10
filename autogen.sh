@@ -42,6 +42,11 @@ cd clan
 ./autogen.sh
 cd ..
 
+echo -e "\n*** Running autotools on cJSON ***"
+cd cJSON
+autoreconf -vi
+cd ..
+
 echo -e "\n*** Running autotools on pet ***"
 (cd pet && ./autogen.sh)
 

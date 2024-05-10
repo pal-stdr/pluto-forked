@@ -354,6 +354,22 @@ fi
  $REL_SRCDIR_PREFIX/cloog-isl/configure ${configureopts} ${archopts}
  )
 
+
+dnl Custom command to build the cJSON library - PALLAB
+dnl Configuring cJSON
+echo ""
+echo "=========================="
+echo "Configuring cJSON"
+echo "=========================="
+configureopts="--prefix=$prefix --enable-static"
+(mkdir -p cJSON
+ cd cJSON/
+ $REL_SRCDIR_PREFIX/cJSON/configure ${configureopts} ${archopts}
+ )
+dnl check if cJSON configure had failed
+AC_CHECK_FILE([cJSON/Makefile], [], [AC_MSG_ERROR([configure in cJSON/ failed])])
+
+
 AC_PATH_PROGS(BASH, bash)
 
 AC_CONFIG_FILES([getversion.sh], [chmod +x ./getversion.sh])
