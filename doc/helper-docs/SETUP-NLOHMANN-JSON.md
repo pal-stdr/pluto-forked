@@ -129,7 +129,7 @@ SUBDIRS = piplib $(MAY_ISL) lib polylib openscop cloog-isl clan candl pet tool
 
 
 
-## 4. Then add the header search `-I` flag path with `pluto_CXXFLAGS` & linker path with `pluto_LDADD` for `json/` for  at `tool/Makefile.am`
+## 4. Then add the header search `-I` flag path with `pluto_CXXFLAGS` at `tool/Makefile.am`
 
 ### 4.1. Add the header search `-I` flag path as `-I$(top_srcdir)/` with `pluto_CXXFLAGS`. Typically at `line 47`. This ensures the header calling style `#include <nlohmann/json.hpp>`
 
