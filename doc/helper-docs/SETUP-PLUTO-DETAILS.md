@@ -13,7 +13,7 @@
 Pluto and libpluto are available under the MIT LICENSE. Please see the file [`LICENSE`](LICENSE) in the top-level directory for more details. And all modifications and additions made in this forked copy is under [`LICENSE_ADDITIONAL`](LICENSE_ADDITIONAL).
 
 
-## PREREQUISITES
+## 1. PREREQUISITES
 
 - Ubuntu 20.04LTS is tested.
 
@@ -21,7 +21,12 @@ Pluto and libpluto are available under the MIT LICENSE. Please see the file [`LI
 
 - LLVM/Clang 14.x (14.x recommended, 11.x, 12.x tested to work as well), along with its development/header files, is needed for the pet submodule. **For this forked copy, `Clang 16.0.6` & `Clang 15.0.0` is also tested successfully.**
 
-### Installing Dev dependencies
+- **DONOT WORK w/ THE `master` BRANCH.**
+
+- For a **QUICKSTART**, go to [doc/helper-docs/QUICKSTART-SETUP-and-WORK-with-PLUTO.md](QUICKSTART-SETUP-and-WORK-with-PLUTO.md). **THAT DOCUMENT WILL TELL YOU THE `SUMMARIZED` PROCESS OF PLAYING WITH PLUTO.**
+
+
+### 1.1. Installing Dev dependencies
 
 **Idea:**
 - General build tools `build-essential` (contains [multiple packages](https://packages.ubuntu.com/focal/build-essential) `g++`, `gcc`, `make`, `libc6-dev`, `dpkg-dev`)
@@ -47,7 +52,7 @@ sudo apt-get install -y texinfo texlive texlive-latex-extra texlive-science
 ```
 
 
-### Handling `LLVM/Clang` dependency
+### 1.2. Handling `LLVM/Clang` dependency
 
 - **`Clang` should be built (not installed with `apt-get install`)**. Because we consider that you might have other `Clang` versions in your machine.
 
@@ -144,28 +149,36 @@ export LD_LIBRARY_PATH=$LLVM_FOR_PET_LIB_PATH${LD_LIBRARY_PATH:+:${LD_LIBRARY_PA
 
 
 
-## Installing Pluto
+## 2. Installing Pluto
 
-### Clone Pluto
+### 2.1. `clone` Pluto and `checkout` the branch `how-to-setup-pluto`
 
-- Here the `--recursive` is used to clone also all the `submodules` (i.e. `openscop`, `cloog-isl`, etc.)
+- **Donot use `--recursive`**.
+
 ```sh
-git clone --recursive https://github.com/pal-stdr/pluto-forked.git pluto-with-llvm-16
+git clone https://github.com/pal-stdr/pluto-forked.git pluto-with-llvm-16
 ```
 
-- If you want to clone pluto from the original source
+- Checkout the branch `how-to-setup-pluto`
+- **Donot work w/ the `master` branch.**
 
 ```sh
-git clone https://github.com/bondhugula/pluto.git
-git checkout 655ca80
+git checkout how-to-setup-pluto
+```
 
-# For loading other libs (cloog-isl, openscop, etc.) nested inside pluto
+### 2.2. Get all the submodules (i.e. `openscop`, `cloog-isl`, etc.)
+
+```sh
+# For loading other libs (cloog-isl, openscop, etc.) nested inside pluto (In one command)
 git submodule update --init
+
+# If you want to do it in 2 separate command
+git submodule init
+git submodule update
 ```
 
 
-
-### Run the `autogen.sh` to generate `configure` script for each of the submodule
+### 2.3. Run the `autogen.sh` to generate `configure` script for each of the submodule
 
 ```sh
 ./autogen.sh
@@ -173,13 +186,13 @@ git submodule update --init
 
 
 
-### Collect your `--with-clang-prefix=` path for Pluto
+### 2.4. Collect your `--with-clang-prefix=` path for Pluto
 
 Considering the first example `Clang` setup in `~/.profile`, let's assume, the path is `/path/to/your/llvm-16-src-build/installation` or `/path/to/your/llvm-16-src-build/build`.
 
 
 
-### Prepare the following `shell` script for installing Pluto
+### 2.5. Prepare the following `shell` script for installing Pluto
 
 - We assume, you have chosen the forked copy for cloning. The following `shell` can be found here []()
 
@@ -318,17 +331,43 @@ fi
 # make install
 ```
 
+### 2.6. Update the `build-pluto-with-llvm.sh` with proper `WANT_TO_CONFIGURE_AND_BUILD=1` settings
 
-## How to use `Pluto`
+**IMPORTANT:**
+- **FOR THE `VERY FIRST TIME`, YOU HAVE TO RUN IT WITH `WANT_TO_CONFIGURE_AND_BUILD=1`. Means, it will gen `Makefile` by reading `configure` files from each submodules. And then run the actual build process (i.e. compilation).**
+
+```sh
+# One time
+chmod +x build-pluto-with-llvm.sh
+
+# Then run (w/ WANT_TO_CONFIGURE_AND_BUILD=1)
+./build-pluto-with-llvm.sh
+```
+
+### 2.7. Play with Pluto 🤠
+
+- **I assume, you already configured + build Pluto once w/ `WANT_TO_CONFIGURE_AND_BUILD=1`.**
+- **So now set it to `WANT_TO_CONFIGURE_AND_BUILD=0`. This will make sure that you only compile Pluto after changing the actual code each time. 😇**
+
+```sh
+# WANT_TO_CONFIGURE_AND_BUILD=0
+# Just change Pluto code and Run the script again and again only to compile
+./build-pluto-with-llvm.sh
+```
+
+
+
+
+## 3. How to use `Pluto`
 
 Though the `--prefix=` is set to `pluto/installation`, so the bins can be found in `./installation/bin/` dir
 
-### Using `pluto` bin (`in`)
+### 3.1. Using `pluto` bin
 
 - Usage format `installation/bin/pluto <input.c> [options] -o <output.c>`. Example `./installation/bin/pluto test/matmul.c -o test/transformed_matmul.c`
 
 
-### Using generated `polycc` script bin (`installation/bin/polycc`)
+### 3.2. Using generated `polycc` script bin (`installation/bin/polycc`)
 
 - Usage format `installation/bin/polycc <input.c> [options] -o <output.c>`. Example `./installation/bin/polycc test/matmul.c -o test/transformed_matmul.c`
 
@@ -365,7 +404,7 @@ done
 
 ### Some of the `flags` for `pluto`
 
-- Default for this `0.12.0-2-g001cb37` version (for details check [ChangeLog](ChangeLog))
+- Default for this `0.12.0-2-g655ca80` version (for details check [ChangeLog](ChangeLog))
 
 ```sh
 - Introduced loop unroll and jam support using ClooG AST and enable it by

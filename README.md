@@ -1,6 +1,7 @@
 # Pluto
 
-## For the Pluto forked copy instructions, Please check the [SETUP-PLUTO.md](doc/helper-docs/SETUP-PLUTO.md) doc.
+## For the `pluto-forked` copy detailed setup instructions, Please check the [doc/helper-docs/SETUP-PLUTO-DETAILS.md](doc/helper-docs/SETUP-PLUTO-DETAILS.md) doc.
+## For the `pluto-forked` copy **QUICKSTART**, Please check the [doc/helper-docs/QUICKSTART-SETUP-and-WORK-with-PLUTO.md](doc/helper-docs/QUICKSTART-SETUP-and-WORK-with-PLUTO.md) doc.
 
 
 ## OVERVIEW
